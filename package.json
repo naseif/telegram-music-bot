@@ -1,0 +1,32 @@
+{
+  "name": "telegram-music-bot",
+  "description": "A telegram bot to download music from various platforms",
+  "version": "1.0.0",
+  "main": "dist/index.js",
+  "devDependencies": {
+    "@types/node-telegram-bot-api": "^0.53.5",
+    "prettier": "^2.5.1",
+    "tslint": "^6.1.3",
+    "typescript": "^4.5.4"
+  },
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/naseif/telegram-music-bot.git"
+  },
+  "keywords": [
+    "telegram-youtube-bot"
+  ],
+  "author": "naseif",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/naseif/telegram-music-bot/issues"
+  },
+  "homepage": "https://github.com/naseif/telegram-music-bot#readme",
+  "dependencies": {
+    "node-telegram-bot-api": "^0.56.0",
+    "youtube-dl-exec": "^2.0.2"
+  }
+}
