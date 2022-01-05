@@ -35,6 +35,8 @@ bot.onText(StreamersRegexList.SOUNDCLOUD, async (msg: Message, match: any) => {
         const videoBuffer = await downloadSongSC(song)
         const fileOptions = {
             filename: song.title,
+            contentType: `audio/mpeg`
+
         };
         bot.sendAudio(chatId, videoBuffer, {}, fileOptions)
 
