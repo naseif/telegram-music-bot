@@ -11,8 +11,6 @@ const bot = new TelegramBot(token, { polling: true });
 bot.onText(StreamersRegexList.YOUTUBE, async (msg: Message, match: any) => {
     const chatId = msg.chat.id;
     try {
-
-        bot.sendMessage(chatId, "Fetching the video from Link...");
         const video = await parseInfo(match[0])
         bot.sendMessage(chatId, `Found: ${video.title} - ${video.author}`);
         const videoBuffer = await downloader(video.qualities[0].url)
@@ -32,13 +30,11 @@ bot.onText(StreamersRegexList.YOUTUBE, async (msg: Message, match: any) => {
 bot.onText(StreamersRegexList.SOUNDCLOUD, async (msg: Message, match: any) => {
     const chatId = msg.chat.id;
     try {
-
-        bot.sendMessage(chatId, "Fetching the video from Link...");
-        const video = await getSongInfoSC(match[0])
-        bot.sendMessage(chatId, `Found: ${video.title} - ${video.author.name}`)
-        const videoBuffer = await downloadSongSC(video)
+        const song = await getSongInfoSC(match[0])
+        bot.sendMessage(chatId, `Found: ${song.title} - ${song.author.name}`)
+        const videoBuffer = await downloadSongSC(song)
         const fileOptions = {
-            filename: video.title,
+            filename: song.title,
         };
         bot.sendAudio(chatId, videoBuffer, {}, fileOptions)
 
@@ -49,5 +45,5 @@ bot.onText(StreamersRegexList.SOUNDCLOUD, async (msg: Message, match: any) => {
 
 
 bot.on('polling_error', (error: { code: any; }) => {
-    console.log(error.code);  // => 'EFATAL'
+    console.log(error.code);
 });
