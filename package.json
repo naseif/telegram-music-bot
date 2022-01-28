@@ -27,8 +27,10 @@
     },
     "homepage": "https://github.com/naseif/telegram-music-bot#readme",
     "dependencies": {
+        "ffmpeg-static": "^4.4.1",
         "node-fetch": "^2.6.6",
         "node-telegram-bot-api": "^0.56.0",
+        "slimbot": "^5.1.0",
         "soundcloud-scraper": "^5.0.2",
         "ytdl-core": "^4.10.0"
     }
