@@ -1,6 +1,5 @@
-const SoundCloud = require("soundcloud-scraper");
+const SoundCloud = require('soundcloud-scraper');
 const client = new SoundCloud.Client();
-
 
 /**
  * Loads the info of the given Song
@@ -9,14 +8,14 @@ const client = new SoundCloud.Client();
  */
 
 export async function getSongInfoSC(url: string) {
-    const info = await client.getSongInfo(url)
-    return info
+    const info = await client.getSongInfo(url);
+    return info;
 }
 
 /**
  * Downloads the Stream and returns the buffer
  * @param info the result of getSongInfo
- * @returns 
+ * @returns
  */
 
 export async function downloadSongSC(info: any) {

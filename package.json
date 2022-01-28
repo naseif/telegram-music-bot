@@ -2,7 +2,7 @@
     "name": "telegram-music-bot",
     "description": "A telegram bot to download music from various platforms",
     "version": "1.0.0",
-    "main": "dist/src/index.js",
+    "main": "dist/src/main.js",
     "devDependencies": {
         "@types/node-fetch": "^3.0.3",
         "@types/node-telegram-bot-api": "^0.53.5",
@@ -11,7 +11,7 @@
         "typescript": "^4.5.4"
     },
     "scripts": {
-        "start": "tsc; node dist/src/index.js"
+        "start": "tsc && node dist/src/main.js"
     },
     "repository": {
         "type": "git",

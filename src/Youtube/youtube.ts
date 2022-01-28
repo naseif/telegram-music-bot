@@ -5,15 +5,17 @@ const ffmpeg = require('ffmpeg-static');
 import { Readable } from 'stream';
 
 export interface VideoInfo {
-    title: string
-    author: string
-    qualities: [{
-        quality: string | undefined
-        container: string;
-        url: string,
-        codecs: string,
-        audioQuality: string | undefined
-    }]
+    title: string;
+    author: string;
+    qualities: [
+        {
+            quality: string | undefined;
+            container: string;
+            url: string;
+            codecs: string;
+            audioQuality: string | undefined;
+        }
+    ];
 }
 
 /**
@@ -25,24 +27,20 @@ export interface VideoInfo {
 export async function parseInfo(url: string): Promise<VideoInfo> {
     const info = await ytdl.getInfo(url);
     const bestquality = info.formats.map((spec) => {
-
-        return (
-            {
-                quality: spec?.qualityLabel,
-                container: spec?.container,
-                url: spec?.url,
-                codecs: spec?.codecs,
-                audioQuality: spec?.audioQuality
-            }
-
-        )
+        return {
+            quality: spec?.qualityLabel,
+            container: spec?.container,
+            url: spec?.url,
+            codecs: spec?.codecs,
+            audioQuality: spec?.audioQuality
+        };
     });
 
     return {
         title: info.videoDetails.title,
         author: info.videoDetails.author.name,
         qualities: bestquality
-    } as unknown as VideoInfo
+    } as unknown as VideoInfo;
 }
 
 /**
@@ -57,18 +55,17 @@ export async function FetchMediaBuffer(url: string): Promise<Buffer> {
     return buffer;
 }
 
-
-
 export async function DownloadAudioAndVideo(videoArray: VideoInfo, queryQuality: string, fileName?: string | number) {
-    const getVideo = videoArray.qualities.filter(quality => quality.quality === queryQuality)
-    const getAudio = videoArray.qualities.filter((audio) => audio.codecs === "opus" && audio.audioQuality === "AUDIO_QUALITY_MEDIUM")
-    if (!getVideo || !getAudio) return
+    const getVideo = videoArray.qualities.filter((quality) => quality.quality === queryQuality);
+    const getAudio = videoArray.qualities.filter(
+        (audio) => audio.codecs === 'opus' && audio.audioQuality === 'AUDIO_QUALITY_MEDIUM'
+    );
 
-    console.log(`Getting Video....`)
-    const video = await FetchMediaBuffer(getVideo[0].url)
+    if (!getVideo || !getAudio) return;
 
-    console.log(`Getting Audio....`)
-    const audio = await FetchMediaBuffer(getAudio[0].url)
+    console.log(`Getting Video and Audio....`);
+    const [video, audio] = await Promise.all([FetchMediaBuffer(getVideo[0].url), FetchMediaBuffer(getAudio[0].url)]);
+    console.log(`Done`);
 
     const ffmpegProcess = cp.spawn(
         ffmpeg,
@@ -92,37 +89,32 @@ export async function DownloadAudioAndVideo(videoArray: VideoInfo, queryQuality:
         ],
         {
             windowsHide: true,
-            stdio: [
-                'inherit',
-                'inherit',
-                'inherit',
-                'pipe',
-                'pipe',
-                'pipe'
-            ]
+            stdio: ['inherit', 'inherit', 'inherit', 'pipe', 'pipe', 'pipe']
         }
     );
 
     const audioBuffer = new Readable();
-    audioBuffer._read = () => { };
+    audioBuffer._read = () => {};
     audioBuffer.push(audio);
     audioBuffer.push(null);
 
     const videoBuffer = new Readable();
-    videoBuffer._read = () => { };
+    videoBuffer._read = () => {};
     videoBuffer.push(video);
     videoBuffer.push(null);
 
-    console.log(`Piping....`)
+    console.log(`Piping....`);
     // @ts-expect-error
     audioBuffer.pipe(ffmpegProcess.stdio[4]);
     // @ts-expect-error
     videoBuffer.pipe(ffmpegProcess.stdio[5]);
-    console.log("Done Piping")
+    console.log('Done Piping');
 }
 
 export async function DownloadAudioOnly(videoArray: VideoInfo): Promise<Buffer> {
-    const getAudio = videoArray.qualities.filter((audio) => audio.codecs === "opus" && audio.audioQuality === "AUDIO_QUALITY_MEDIUM")
-    const audio = await FetchMediaBuffer(getAudio[0].url)
-    return audio
-}   
+    const getAudio = videoArray.qualities.filter(
+        (audio) => audio.codecs === 'opus' && audio.audioQuality === 'AUDIO_QUALITY_MEDIUM'
+    );
+    const audio = await FetchMediaBuffer(getAudio[0].url);
+    return audio;
+}
